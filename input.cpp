@@ -2,7 +2,7 @@
 #include "nx.h"
 #include "input.fdh"
 
-uint8_t mappings[SDLK_LAST];
+uint8_t mappings[SDL_NUM_SCANCODES];
 
 bool inputs[INPUT_COUNT];
 bool lastinputs[INPUT_COUNT];
@@ -85,7 +85,7 @@ int input_get_mapping(int keyindex)
 {
 int i;
 
-	for(i=0;i<=SDLK_LAST;i++)
+	for(i=0;i<=SDL_NUM_SCANCODES;i++)
 	{
 		if (mappings[i] == keyindex)
 			return i;
