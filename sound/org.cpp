@@ -105,14 +105,14 @@ static int SamplesToMS(int samples)
 }
 
 
-static bool load_drumtable(const char *pxt_path)		// pxt_path = the path where drum pxt files can be found
-{
-char fname[80];
-int d;
-FILE *fp;
-static const char *drum_cache = "drum.pcm";
+static bool load_drumtable(const char *pxt_path) {		// pxt_path = the path where drum pxt files can be found
+	char fname[80];
+	int d;
+	FILE *fp;
+	static const char *drum_cache = "drum.pcm";
 #define DRUM_VERSION	0x0001
-uint16_t version;
+	uint16_t version;
+	unsigned long error;
 
 	#ifndef DRUM_PXT
 		for(d=0;d<NUM_DRUMS;d++)
@@ -127,7 +127,10 @@ uint16_t version;
 		if (fp)
 		{
 			// this also checks for correct endianness
-			fread(&version, sizeof(version), 1, fp);
+			error = fread(&version, sizeof(version), 1, fp);
+			if (error != 1 ) {
+				printf("org.cpp: expected to read 1 version, but read %lu\n",error);
+			}
 			if (version != DRUM_VERSION)
 			{
 				printf("%s: version incorrect\n", drum_cache);
@@ -138,7 +141,10 @@ uint16_t version;
 				{
 					drumtable[d].nsamples = fgetl(fp);
 					drumtable[d].samples = (signed short *)malloc(drumtable[d].nsamples * 2);
-					fread(drumtable[d].samples, drumtable[d].nsamples*2, 1, fp);
+					error = fread(drumtable[d].samples, drumtable[d].nsamples*2, 1, fp);
+					if(error != 1) {
+						printf("org.cpp: expected to read 1 drumtable sample, but read %lu\n",error);
+					}
 				}
 				fclose(fp);
 				stat("-- Drums loaded from cache");
@@ -260,13 +266,14 @@ stPXSound snd;
 
 
 
-static bool load_wavetable(const char *fname)
+static unsigned char load_wavetable(const char *fname)
 {
-int wav, sampl;
-FILE *fp;
+	int wav, sampl;
+	FILE *fp;
 #define BUF_SIZE		(100 * 256)
-signed char buffer[BUF_SIZE + 1];
-signed char *ptr;
+	signed char buffer[BUF_SIZE + 1];
+	signed char *ptr;
+	size_t err;
 
 	fp = fileopen(fname, "rb");
 	if (!fp)
@@ -275,7 +282,11 @@ signed char *ptr;
 		return 1;
 	}
 	
-	fread(buffer, BUF_SIZE, 1, fp);
+	err = fread(buffer, BUF_SIZE, 1, fp);
+	if(err != 1) {
+		stat("org.cpp: read wrong amount of BUF_SIZEs");
+		return 2;
+	}
 	fclose(fp);
 	
 	ptr = &buffer[0];
