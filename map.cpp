@@ -279,22 +279,25 @@ unsigned char tc;
 	return 0;
 }
 
-bool load_stages(void)
-{
-FILE *fp;
+unsigned char load_stages(void) {
+	FILE *fp;
+	size_t err;
 
 	fp = fileopen("stage.dat", "rb");
-	if (!fp)
-	{
+	if (!fp) {
 		staterr("%s(%d): failed to open stage.dat", __FILE__, __LINE__);
 		num_stages = 0;
 		return 1;
 	}
 	
 	num_stages = fgetc(fp);
-	for(int i=0;i<num_stages;i++)
-		fread(&stages[i], sizeof(MapRecord), 1, fp);
-	
+	for(int i=0;i<num_stages;i++) {
+		err = fread(&stages[i], sizeof(MapRecord), 1, fp);
+		if (err != 1) {
+			staterr("%s: read incorrect amount of MapRecords from stage.dat");
+			return 2;
+		}
+	}
 	return 0;
 }
 

@@ -14,7 +14,7 @@ bool load_stage(int stage_no);
 bool load_map(const char *fname);
 bool load_entities(const char *fname);
 bool load_tileattr(const char *fname);
-bool load_stages(void);
+unsigned char load_stages(void);
 bool initmapfirsttime(void);
 void initmap(void);
 void map_set_backdrop(int backdrop_no);
