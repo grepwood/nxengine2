@@ -1,5 +1,5 @@
 CXX=g++
-CXXFLAGS=-g -O2 -m32
+CXXFLAGS=-g -O2
 SDL2_FLAGS=`sdl2-config --cflags` -Wreturn-type -Wformat -Wno-multichar
 SDL2_LIBS=`sdl2-config --libs` -lSDL_ttf -lstdc++ -lm
 
@@ -34,7 +34,7 @@ nx:  main.o game.o object.o ObjManager.o \
 	 autogen/objnames.o stagedata.o common/FileBuffer.o common/InitList.o common/BList.o \
 	 common/StringList.o common/DBuffer.o common/DString.o common/bufio.o common/stat.o \
 	 common/misc.o
-	$(CXX) -m32 -o nx \
+	$(CXX) -o nx \
 	 main.o game.o object.o ObjManager.o \
 	 map.o TextBox/TextBox.o TextBox/YesNoPrompt.o TextBox/ItemImage.o TextBox/StageSelect.o \
 	 TextBox/SaveSelect.o profile.o settings.o platform.o platform/Linux/vbesync.o \
